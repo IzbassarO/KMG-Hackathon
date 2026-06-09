@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 33% 98%;
+    --foreground: 220 30% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 30% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 30% 12%;
+
+    --primary: 211 100% 25%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 24% 94%;
+    --secondary-foreground: 220 30% 18%;
+
+    --muted: 220 20% 96%;
+    --muted-foreground: 220 12% 45%;
+
+    --accent: 35 100% 48%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 18% 88%;
+    --input: 220 18% 88%;
+    --ring: 211 100% 35%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 220 35% 8%;
+    --foreground: 220 14% 96%;
+
+    --card: 220 30% 12%;
+    --card-foreground: 220 14% 96%;
+
+    --popover: 220 30% 12%;
+    --popover-foreground: 220 14% 96%;
+
+    --primary: 35 100% 55%;
+    --primary-foreground: 220 30% 12%;
+
+    --secondary: 220 22% 18%;
+    --secondary-foreground: 220 14% 96%;
+
+    --muted: 220 22% 16%;
+    --muted-foreground: 220 12% 65%;
+
+    --accent: 211 80% 60%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 70% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 22% 22%;
+    --input: 220 22% 22%;
+    --ring: 35 100% 55%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  }
+}
+
+@layer components {
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(0, 63, 125, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 63, 125, 0.06) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .glass-card {
+    @apply bg-white/70 backdrop-blur border border-white/40 shadow-elevated;
+  }
+
+  .kpi-stat {
+    @apply text-3xl font-semibold tracking-tight text-kmg-ink;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold tracking-tight text-kmg-ink;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgba(0, 63, 125, 0.25);
+    border-radius: 9999px;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .gradient-navy {
+    background-image: linear-gradient(135deg, #003f7d 0%, #1a5694 60%, #002a55 100%);
+  }
+  .gradient-gold {
+    background-image: linear-gradient(135deg, #f39200 0%, #ffaa2d 100%);
+  }
+  .gradient-paper {
+    background-image:
+      radial-gradient(1200px 600px at 10% -10%, rgba(0, 63, 125, 0.08), transparent 60%),
+      radial-gradient(900px 500px at 110% 0%, rgba(243, 146, 0, 0.08), transparent 60%),
+      linear-gradient(180deg, #f6f8fb 0%, #ffffff 100%);
+  }
+}
+
+.react-flow__node-default {
+  font-family: var(--font-inter), system-ui, sans-serif;
+}
+
+.react-flow__attribution {
+  display: none !important;
+}
