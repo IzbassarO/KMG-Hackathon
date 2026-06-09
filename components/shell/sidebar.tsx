@@ -22,7 +22,8 @@ import {
   CalendarDays,
   FolderArchive,
   HelpCircle,
-  Heart
+  Heart,
+  HeartHandshake
 } from "lucide-react";
 
 interface NavItem {
@@ -36,6 +37,7 @@ const hrNav: NavItem[] = [
   { href: "/hr/dashboard", label: "Обзор", icon: LayoutDashboard },
   { href: "/hr/tickets", label: "Тикеты онбординга", icon: Workflow, badge: "Flow" },
   { href: "/hr/employees", label: "Сотрудники", icon: Users },
+  { href: "/hr/mentorship", label: "Менторство", icon: Heart },
   { href: "/hr/calendar", label: "Календарь", icon: CalendarDays },
   { href: "/hr/reports", label: "Аналитика", icon: BarChart3, badge: "Live" },
   { href: "/hr/documents", label: "Документы", icon: FolderArchive },
@@ -61,6 +63,7 @@ const empNav: NavItem[] = [
 
 const empSecondary: NavItem[] = [
   { href: "/employee/team", label: "Моя команда", icon: Building2 },
+  { href: "/employee/feedback", label: "Фидбэк и пульс", icon: HeartHandshake },
   { href: "/employee/help", label: "Помощь и FAQ", icon: HelpCircle },
   { href: "/employee/settings", label: "Настройки", icon: Wrench }
 ];
