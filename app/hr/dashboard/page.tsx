@@ -16,8 +16,9 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { CreateTicketDialog } from "@/components/shared/create-ticket-dialog";
 import { useStore } from "@/lib/store";
-import { formatDate, initials, percent } from "@/lib/utils";
+import { formatDate, initials } from "@/lib/utils";
 
 export default function HrDashboardPage() {
   const { state, currentUser } = useStore();
@@ -55,11 +56,13 @@ export default function HrDashboardPage() {
                 <Database className="h-4 w-4" /> База знаний
               </Link>
             </Button>
-            <Button variant="accent" asChild>
-              <Link href="/hr/tickets?new=true">
-                <GitBranch className="h-4 w-4" /> Новый тикет
-              </Link>
-            </Button>
+            <CreateTicketDialog
+              trigger={
+                <Button variant="accent">
+                  <GitBranch className="h-4 w-4" /> Новый тикет
+                </Button>
+              }
+            />
           </div>
         </div>
         <p className="max-w-3xl text-sm text-muted-foreground">

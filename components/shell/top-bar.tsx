@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bell, LogOut, Search, Settings } from "lucide-react";
+import { Bell, LogOut, Menu, Search, Settings } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +13,9 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sidebar } from "./sidebar";
+import { NotificationsSheet } from "@/components/shared/notifications-sheet";
 import { useStore } from "@/lib/store";
 import { initials } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -23,8 +26,18 @@ export function TopBar({ context }: { context: "hr" | "employee" }) {
 
   return (
     <header className="sticky top-0 z-30 border-b border-kmg-mist/80 bg-white/80 backdrop-blur">
-      <div className="flex h-16 items-center justify-between gap-4 px-6">
+      <div className="flex h-16 items-center justify-between gap-4 px-4 md:px-6">
         <div className="flex items-center gap-3">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Меню">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-72 p-0">
+              <Sidebar context={context} mobile />
+            </SheetContent>
+          </Sheet>
           <Badge variant="navy" className="hidden md:inline-flex">
             {context === "hr" ? "HR Console" : "Employee Workspace"}
           </Badge>
@@ -32,19 +45,23 @@ export function TopBar({ context }: { context: "hr" | "employee" }) {
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Поиск тикетов, сотрудников, статей..."
-              className="w-[360px] pl-9"
+              className="w-[300px] pl-9 xl:w-[360px]"
             />
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" aria-label="Уведомления" className="relative">
-            <Bell className="h-5 w-5" />
-            {unread > 0 && (
-              <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-kmg-gold px-1 text-[10px] font-semibold text-white">
-                {Math.min(unread, 9)}
-              </span>
-            )}
-          </Button>
+          <NotificationsSheet
+            trigger={
+              <Button variant="ghost" size="icon" aria-label="Уведомления" className="relative">
+                <Bell className="h-5 w-5" />
+                {unread > 0 && (
+                  <span className="absolute right-1 top-1 grid h-4 min-w-4 place-items-center rounded-full bg-kmg-gold px-1 text-[10px] font-semibold text-white">
+                    {Math.min(unread, 9)}
+                  </span>
+                )}
+              </Button>
+            }
+          />
           <Button variant="ghost" size="icon" aria-label="Настройки" asChild>
             <Link href={`/${context}/settings`}>
               <Settings className="h-5 w-5" />

@@ -14,6 +14,7 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { TicketCard } from "@/components/shared/ticket-card";
+import { CreateTicketDialog } from "@/components/shared/create-ticket-dialog";
 import { useStore } from "@/lib/store";
 import type { TicketStatus } from "@/lib/types";
 
@@ -74,9 +75,13 @@ export default function HrTicketsPage() {
             чтобы увидеть полный flowchart.
           </p>
         </div>
-        <Button variant="accent">
-          <Plus className="h-4 w-4" /> Создать тикет
-        </Button>
+        <CreateTicketDialog
+          trigger={
+            <Button variant="accent">
+              <Plus className="h-4 w-4" /> Создать тикет
+            </Button>
+          }
+        />
       </div>
 
       <Card>
