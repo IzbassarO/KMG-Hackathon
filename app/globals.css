@@ -155,6 +155,16 @@
 .dark .border-kmg-mist\/80 {
   border-color: hsl(220 20% 26%);
 }
+/* «Выполнено»-плашки (полупрозрачный зелёный тинт как фон строки) — делаем тёмными,
+   чтобы светлый текст был читаем. Плотный bg-emerald-50 (бейджи/баннеры) НЕ трогаем. */
+.dark .bg-emerald-50\/60,
+.dark .bg-emerald-50\/50,
+.dark .bg-emerald-50\/40 {
+  background-color: hsl(155 42% 15%);
+}
+.dark .border-emerald-200 {
+  border-color: hsl(155 28% 30%);
+}
 .dark .text-kmg-ink {
   color: hsl(220 14% 94%);
 }
