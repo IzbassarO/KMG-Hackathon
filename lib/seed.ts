@@ -47,12 +47,12 @@ const users: User[] = [
   },
   {
     id: "u_emp_geo",
-    fullName: "Дамир Кенжебеков",
-    email: "d.kenzhebekov@kmg.kz",
+    fullName: "Асылбек Гизатов",
+    email: "a.gizatov@kmg.kz",
     role: "employee",
     position: "Геолог-аналитик",
     department: "Разведка и добыча",
-    avatarSeed: "kenzhebekov",
+    avatarSeed: "gizatov",
     startDate: day(-3),
     managerId: "u_hr_lead"
   },
@@ -443,6 +443,46 @@ const tickets: Ticket[] = [
         status: "pending"
       }
     ])
+  },
+  {
+    id: "t_badge_007",
+    code: "ONB-1048",
+    title: "Бейдж и пропускной режим",
+    summary:
+      "Генерация корпоративного бейджа по документам (согласие, служебная записка, удостоверение, фото 3×4) и выдача сотруднику. Процесс: HR → Badge Center.",
+    category: "access",
+    priority: "high",
+    status: "in_progress",
+    assigneeId: "u_emp_geo",
+    ownerId: "u_hr_lead",
+    badges: [
+      { label: "День 1-2", tone: "navy" },
+      { label: "ДКБ", tone: "info" }
+    ],
+    dueDate: day(2),
+    createdAt: day(-1),
+    updatedAt: day(0),
+    progress: 0,
+    tags: ["badge", "пропуск", "ДКБ"],
+    flow: baseFlow("badge", [
+      {
+        title: "Сгенерировать бейдж в Badge Center",
+        description: "Загрузить согласие, служебную записку, удостоверение и фото 3×4 (или нажать «Заполнить демо») и сгенерировать бейдж.",
+        type: "task",
+        role: "hr",
+        days: 1,
+        status: "active",
+        resources: [{ label: "Открыть Badge Center", url: "/hr/badge" }]
+      },
+      {
+        title: "Печать и выдача бейджа",
+        description: "Распечатать готовый бейдж и выдать новому сотруднику.",
+        type: "task",
+        role: "hr",
+        days: 1,
+        status: "pending"
+      }
+    ])
   }
 ];
 
@@ -547,7 +587,7 @@ const activity: ActivityEvent[] = [
     id: "a1",
     actorId: "u_hr_lead",
     actorName: "Нурлан Жумабаев",
-    message: "Назначил тикет ONB-1042 на Дамира Кенжебекова",
+    message: "Назначил тикет ONB-1042 на Асылбека Гизатова",
     type: "ticket",
     createdAt: day(-1),
     meta: { ticket: "ONB-1042" }
@@ -555,7 +595,7 @@ const activity: ActivityEvent[] = [
   {
     id: "a2",
     actorId: "u_emp_geo",
-    actorName: "Дамир Кенжебеков",
+    actorName: "Асылбек Гизатов",
     message: "Загрузил скан удостоверения личности",
     type: "task",
     createdAt: day(-1),
@@ -683,6 +723,7 @@ export function buildInitialState(): PortalState {
     ],
     onboarding: {},
     courseProgress: {},
+    badges: {},
     currentUserId: null,
     hydrated: false
   };

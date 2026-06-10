@@ -10,6 +10,8 @@
  * только на текущий день; остальное открывается по мере роста дня (unlockDay).
  */
 
+import { VIDEO_LINKS } from "./media";
+
 export const PROBATION_DAYS = 90;
 
 export interface Stage {
@@ -76,26 +78,39 @@ export const SCHEDULE: PlanItem[] = [
     title: "Видеообращение Председателя Правления КМГ",
     description: "Приветствие и ориентиры компании. Обязательно к просмотру в первый день. (F-02)",
     unlockDay: 1,
-    href: "#video-chairman",
+    href: VIDEO_LINKS.chairmanWelcome || "#video-chairman",
     priority: "high"
   },
   {
     id: "d1-tb",
-    kind: "task",
-    title: "Инструктаж по технике безопасности (ТБ)",
-    description: "Пройдите инструктаж и тест. Дедлайн — конец дня 1. (F-03)",
+    kind: "course",
+    title: "Инструктаж по технике безопасности — курс HSE",
+    description: "Пройдите курс по охране труда и тест. Дедлайн — конец дня 1. (F-03)",
     unlockDay: 1,
     source: "ПВТР",
-    href: "/employee/learning",
+    href: "/employee/learning/hse",
+    courseId: "hse",
     priority: "high"
   },
   {
     id: "d1-ib",
-    kind: "task",
-    title: "Инструктаж по информационной безопасности (ИБ)",
-    description: "Пройдите инструктаж и тест. Дедлайн — конец дня 1. (F-04)",
+    kind: "course",
+    title: "Инструктаж по информационной безопасности — курс ИБ",
+    description: "Пройдите курс по ИБ и тест. Дедлайн — конец дня 1. (F-04)",
     unlockDay: 1,
-    href: "/employee/learning",
+    href: "/employee/learning/infosec",
+    courseId: "infosec",
+    priority: "high"
+  },
+  {
+    id: "d1-compliance",
+    kind: "course",
+    title: "Модуль «Комплаенс» — курс по этике",
+    description: "Антикоррупционная политика, кодекс этики и тест. Дедлайн — день 1. (F-07)",
+    unlockDay: 1,
+    source: "Комплаенс",
+    href: "/employee/learning/compliance",
+    courseId: "compliance",
     priority: "high"
   },
   {
@@ -116,15 +131,6 @@ export const SCHEDULE: PlanItem[] = [
     href: "/employee/documents",
     priority: "high"
   },
-  {
-    id: "d1-compliance",
-    kind: "task",
-    title: "Модуль «Комплаенс»",
-    description: "Антикоррупционная политика и линия доверия. Дедлайн — день 1. (F-07)",
-    unlockDay: 1,
-    source: "Комплаенс",
-    priority: "high"
-  },
 
   // ── Дни 2–30 · Вовлечение (§5.2) ────────────────────────────────────────────
   {
@@ -133,36 +139,6 @@ export const SCHEDULE: PlanItem[] = [
     title: "Welcome-кофe с командой",
     description: "Неформальное знакомство с коллегами подразделения.",
     unlockDay: 2
-  },
-  {
-    id: "d2-course-hse",
-    kind: "course",
-    title: "Курс «Безопасность на производстве (HSE)»",
-    description: "Обязательный курс по охране труда: видео, материалы и тест.",
-    unlockDay: 2,
-    href: "/employee/learning/hse",
-    courseId: "hse",
-    priority: "high"
-  },
-  {
-    id: "d4-course-compliance",
-    kind: "course",
-    title: "Курс «Антикоррупционная политика и этика»",
-    description: "Кодекс деловой этики, конфликт интересов и тест.",
-    unlockDay: 4,
-    href: "/employee/learning/compliance",
-    courseId: "compliance",
-    priority: "high"
-  },
-  {
-    id: "d6-course-infosec",
-    kind: "course",
-    title: "Курс «Информационная безопасность»",
-    description: "Пароли, доступы, фишинг и проверка знаний.",
-    unlockDay: 6,
-    href: "/employee/learning/infosec",
-    courseId: "infosec",
-    priority: "high"
   },
   {
     id: "d3-di",

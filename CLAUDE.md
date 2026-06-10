@@ -50,7 +50,7 @@ lib/
 В `lib/seed.ts`:
 
 - **HR**: Айгерим Сатпаева (`u_hr_director`), Нурлан Жумабаев (`u_hr_lead`)
-- **Сотрудники**: Дамир Кенжебеков (`u_emp_geo`), Алия Бектурова (`u_emp_eng`), Олжас Смагулов (`u_emp_fin`)
+- **Сотрудники**: Асылбек Гизатов (`u_emp_geo`), Алия Бектурова (`u_emp_eng`), Олжас Смагулов (`u_emp_fin`)
 
 6 тикетов по 6 категориям: documents, access, training, equipment, compliance, mentorship.
 

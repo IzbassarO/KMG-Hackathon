@@ -41,3 +41,23 @@
 
 Тексты карточек идентичны тем, что показывает портал
 (`lib/program.ts` → `CULTURE_CARDS`) — единый источник истины.
+
+## Сервисы коллеги
+
+- **`digital_buddy.py`** — `RAGService` (23 ВНД + Groq LLM `llama-3.3-70b-versatile`).
+- **`badge_office_service_final.py`** + `Badge Office Automation Service.md` — генерация бейджей.
+
+### Ключи и .env
+
+Ключ Groq берётся **из окружения**, в коде не хранится:
+
+```bash
+cp .env.example .env          # ai-module/.env (НЕ коммитится, см. .gitignore)
+# впишите GROQ_API_KEY=...     (https://console.groq.com/keys)
+export $(grep -v '^#' .env | xargs)   # или python-dotenv
+python3 digital_buddy.py
+```
+
+> 🔐 Если ключ Groq ранее был захардкожен в коде/истории — **отзовите и пересоздайте** его.
+> Портал тоже умеет звать Groq напрямую (серверный маршрут `app/api/chat`, ключ в корневом
+> `.env.local`) — отдельный Python-сервер для чата не обязателен.

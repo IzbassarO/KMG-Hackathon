@@ -41,6 +41,7 @@ const ru: Dict = {
   "nav.hrMentorship": "Менторство",
   "nav.reports": "Аналитика",
   "nav.hrLearning": "Обучение",
+  "nav.badge": "Бейдж-центр",
   "nav.assistantHr": "AI-Куратор",
 
   "top.search": "Поиск разделов, тикетов, статей...",
@@ -100,7 +101,36 @@ const ru: Dict = {
   "landing.selectRoleTitle": "Выберите роль",
   "landing.hrDesc": "Конструктор онбординга",
   "landing.empDesc": "Личный путь адаптации",
-  "landing.localData": "Все данные хранятся локально в этом браузере (localStorage)."
+  "landing.localData": "Все данные хранятся локально в этом браузере (localStorage).",
+
+  "badge.subtitle": "Генерация корпоративного бейджа по документам: согласие, служебная записка, удостоверение и фото 3×4.",
+  "badge.prefill": "Заполнить демо",
+  "badge.employee": "Сотрудник:",
+  "badge.docsTitle": "Документы-основания",
+  "badge.docsDesc": "Загрузите файлы или нажмите «Заполнить демо». Фото 3×4 — изображение, остальные документы — PDF или скан.",
+  "badge.photo": "Фото 3×4",
+  "badge.uploaded": "Загружено",
+  "badge.photoHint": "PNG / JPG · обязательно",
+  "badge.choose": "Выбрать",
+  "badge.replace": "Заменить",
+  "badge.consent": "Согласие на обработку ПДн",
+  "badge.memo": "Служебная записка",
+  "badge.idDoc": "Удостоверение / паспорт",
+  "badge.hintPdf": "PDF",
+  "badge.hintMemo": "PDF · обязательно",
+  "badge.hintId": "PDF / скан",
+  "badge.clear": "Очистить",
+  "badge.previewTitle": "Предпросмотр бейджа",
+  "badge.previewDesc": "85 × 54 мм · готов к печати",
+  "badge.issued": "Выдан",
+  "badge.emptyPreview": "Загрузите фото 3×4 или нажмите «Заполнить демо», чтобы сгенерировать бейдж.",
+  "badge.download": "Скачать PNG",
+  "badge.print": "Печать",
+  "badge.issue": "Выдать (в тикет)",
+  "badge.memoRequired": "Для выдачи приложите служебную записку (обязательный документ).",
+  "badge.issuedMsg": "Бейдж сгенерирован и отправлен в тикет «Бейдж и пропускной режим». Сотрудник уведомлён. Следующий шаг — печать и выдача.",
+  "badge.pass": "ПРОПУСК · ID",
+  "badge.employeeRole": "Сотрудник"
 };
 
 const kk: Dict = {
@@ -129,6 +159,7 @@ const kk: Dict = {
   "nav.hrMentorship": "Тәлімгерлік",
   "nav.reports": "Аналитика",
   "nav.hrLearning": "Оқу",
+  "nav.badge": "Бейдж-орталық",
   "nav.assistantHr": "AI-Куратор",
 
   "top.search": "Бөлімдер, тикеттер, мақалаларды іздеу...",
@@ -188,7 +219,36 @@ const kk: Dict = {
   "landing.selectRoleTitle": "Рөлді таңдаңыз",
   "landing.hrDesc": "Онбординг конструкторы",
   "landing.empDesc": "Жеке бейімделу жолы",
-  "landing.localData": "Барлық деректер осы браузерде локалды сақталады (localStorage)."
+  "landing.localData": "Барлық деректер осы браузерде локалды сақталады (localStorage).",
+
+  "badge.subtitle": "Құжаттар бойынша корпоративтік бейдж жасау: келісім, қызметтік жазба, куәлік және 3×4 фото.",
+  "badge.prefill": "Демо толтыру",
+  "badge.employee": "Қызметкер:",
+  "badge.docsTitle": "Негіздеме құжаттары",
+  "badge.docsDesc": "Файлдарды жүктеңіз немесе «Демо толтыру» басыңыз. 3×4 фото — сурет, қалған құжаттар — PDF немесе скан.",
+  "badge.photo": "3×4 фото",
+  "badge.uploaded": "Жүктелді",
+  "badge.photoHint": "PNG / JPG · міндетті",
+  "badge.choose": "Таңдау",
+  "badge.replace": "Ауыстыру",
+  "badge.consent": "Дербес деректерді өңдеуге келісім",
+  "badge.memo": "Қызметтік жазба",
+  "badge.idDoc": "Жеке куәлік / төлқұжат",
+  "badge.hintPdf": "PDF",
+  "badge.hintMemo": "PDF · міндетті",
+  "badge.hintId": "PDF / скан",
+  "badge.clear": "Тазалау",
+  "badge.previewTitle": "Бейджді алдын ала қарау",
+  "badge.previewDesc": "85 × 54 мм · басып шығаруға дайын",
+  "badge.issued": "Берілді",
+  "badge.emptyPreview": "Бейдж жасау үшін 3×4 фото жүктеңіз немесе «Демо толтыру» басыңыз.",
+  "badge.download": "PNG жүктеу",
+  "badge.print": "Басып шығару",
+  "badge.issue": "Беру (тикетке)",
+  "badge.memoRequired": "Беру үшін қызметтік жазбаны тіркеңіз (міндетті құжат).",
+  "badge.issuedMsg": "Бейдж жасалып, «Бейдж және рұқсат режимі» тикетіне жіберілді. Қызметкер хабарландырылды. Келесі қадам — басып шығару және беру.",
+  "badge.pass": "РҰҚСАТ · ID",
+  "badge.employeeRole": "Қызметкер"
 };
 
 const en: Dict = {
@@ -217,6 +277,7 @@ const en: Dict = {
   "nav.hrMentorship": "Mentorship",
   "nav.reports": "Analytics",
   "nav.hrLearning": "Learning",
+  "nav.badge": "Badge Center",
   "nav.assistantHr": "AI Curator",
 
   "top.search": "Search sections, tickets, articles...",
@@ -276,7 +337,36 @@ const en: Dict = {
   "landing.selectRoleTitle": "Choose a role",
   "landing.hrDesc": "Onboarding builder",
   "landing.empDesc": "Personal adaptation path",
-  "landing.localData": "All data is stored locally in this browser (localStorage)."
+  "landing.localData": "All data is stored locally in this browser (localStorage).",
+
+  "badge.subtitle": "Generate a corporate badge from documents: consent, memo, ID and a 3×4 photo.",
+  "badge.prefill": "Fill demo",
+  "badge.employee": "Employee:",
+  "badge.docsTitle": "Source documents",
+  "badge.docsDesc": "Upload files or click “Fill demo”. The 3×4 photo is an image; the other documents are PDF or scans.",
+  "badge.photo": "Photo 3×4",
+  "badge.uploaded": "Uploaded",
+  "badge.photoHint": "PNG / JPG · required",
+  "badge.choose": "Choose",
+  "badge.replace": "Replace",
+  "badge.consent": "Personal data consent",
+  "badge.memo": "Service memo",
+  "badge.idDoc": "ID / passport",
+  "badge.hintPdf": "PDF",
+  "badge.hintMemo": "PDF · required",
+  "badge.hintId": "PDF / scan",
+  "badge.clear": "Clear",
+  "badge.previewTitle": "Badge preview",
+  "badge.previewDesc": "85 × 54 mm · print-ready",
+  "badge.issued": "Issued",
+  "badge.emptyPreview": "Upload a 3×4 photo or click “Fill demo” to generate the badge.",
+  "badge.download": "Download PNG",
+  "badge.print": "Print",
+  "badge.issue": "Issue (to ticket)",
+  "badge.memoRequired": "Attach the service memo (required document) to issue.",
+  "badge.issuedMsg": "The badge was generated and sent to the “Badge & access” ticket. The employee was notified. Next step — print and hand over.",
+  "badge.pass": "PASS · ID",
+  "badge.employeeRole": "Employee"
 };
 
 export const DICTS: Record<Locale, Dict> = { ru, kk, en };

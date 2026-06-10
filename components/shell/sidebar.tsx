@@ -24,6 +24,7 @@ import {
   FolderArchive,
   HelpCircle,
   Heart,
+  CreditCard,
   HeartHandshake
 } from "lucide-react";
 
@@ -38,6 +39,7 @@ const hrNav: NavItem[] = [
   { href: "/hr/dashboard", label: "nav.overview", icon: LayoutDashboard },
   { href: "/hr/tickets", label: "nav.tickets", icon: Workflow, badge: "Flow" },
   { href: "/hr/employees", label: "nav.employees", icon: Users },
+  { href: "/hr/badge", label: "nav.badge", icon: CreditCard },
   { href: "/hr/mentorship", label: "nav.hrMentorship", icon: Heart },
   { href: "/hr/calendar", label: "nav.calendar", icon: CalendarDays },
   { href: "/hr/reports", label: "nav.reports", icon: BarChart3, badge: "Live" },

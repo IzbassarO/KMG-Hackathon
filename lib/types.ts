@@ -110,6 +110,18 @@ export interface ActivityEvent {
   meta?: Record<string, string>;
 }
 
+export interface BadgeRecord {
+  employeeId: string;
+  fio: string;
+  position?: string;
+  department?: string;
+  /** документы-основания (отметка о приложении) */
+  documents: { consent: boolean; memo: boolean; id: boolean };
+  /** сгенерированный бейдж (PNG data URL) */
+  badgeDataUrl?: string;
+  issuedAt: string;
+}
+
 export interface FeedbackEntry {
   id: string;
   userId: string;
@@ -222,6 +234,7 @@ export interface PortalState {
   meetingRequests: MeetingRequest[];
   feedback: FeedbackEntry[];
   logins: LoginEvent[];
+  badges: Record<string, BadgeRecord>;
   /** прогресс адаптации по сотрудникам, ключ — userId */
   onboarding: Record<string, OnboardingProgress>;
   /** прогресс по курсам: userId → courseId → CourseProgress */

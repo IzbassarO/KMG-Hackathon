@@ -1,6 +1,8 @@
 node_modules
 .next
-.env*.local
+# секреты: игнорируем все .env* (в т.ч. ai-module/.env), но оставляем шаблоны .env.example
+.env*
+!.env.example
 .DS_Store
 *.log
 .vercel

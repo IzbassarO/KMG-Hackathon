@@ -7,6 +7,8 @@ import {
   ArrowLeft,
   CalendarDays,
   ClipboardList,
+  CreditCard,
+  Download,
   GitBranch,
   Pencil,
   Sparkles,
@@ -37,6 +39,8 @@ export default function HrTicketPage({ params }: { params: Promise<{ id: string 
   const assignee = state.users.find((u) => u.id === ticket.assigneeId);
   const owner = state.users.find((u) => u.id === ticket.ownerId);
   const tasks = state.tasks.filter((t) => t.ticketId === ticket.id);
+  const isBadgeTicket = ticket.tags.includes("badge");
+  const badge = ticket.assigneeId ? helpers.getBadge(ticket.assigneeId) : undefined;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6">
@@ -138,9 +142,57 @@ export default function HrTicketPage({ params }: { params: Promise<{ id: string 
         <TabsList>
           <TabsTrigger value="flow">Flowchart</TabsTrigger>
           <TabsTrigger value="tasks">Задачи</TabsTrigger>
+          {isBadgeTicket && <TabsTrigger value="badge">Бейдж</TabsTrigger>}
           <TabsTrigger value="comments">Комментарии</TabsTrigger>
           <TabsTrigger value="audit">Аудит</TabsTrigger>
         </TabsList>
+        {isBadgeTicket && (
+          <TabsContent value="badge">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <CreditCard className="h-4 w-4 text-kmg-navy" /> Бейдж сотрудника
+                  </CardTitle>
+                  <CardDescription>
+                    {badge
+                      ? `Сгенерирован ${formatDate(badge.issuedAt)} · документы: ${
+                          [badge.documents.consent && "согласие", badge.documents.memo && "записка", badge.documents.id && "удостоверение"]
+                            .filter(Boolean)
+                            .join(", ") || "—"
+                        }`
+                      : "Бейдж ещё не сгенерирован."}
+                  </CardDescription>
+                </div>
+                <Button variant="accent" asChild>
+                  <Link href="/hr/badge">
+                    <CreditCard className="h-4 w-4" /> Открыть Badge Center
+                  </Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                {badge?.badgeDataUrl ? (
+                  <div className="flex flex-wrap items-start gap-4">
+                    <div className="w-[340px] max-w-full overflow-hidden rounded-2xl border border-kmg-mist">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={badge.badgeDataUrl} alt="Бейдж" className="w-full" />
+                    </div>
+                    <Button variant="outline" asChild>
+                      <a href={badge.badgeDataUrl} download={`badge_${badge.fio.replace(/\s+/g, "_")}.png`}>
+                        <Download className="h-4 w-4" /> Скачать
+                      </a>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-kmg-mist bg-kmg-paper p-8 text-center text-sm text-muted-foreground">
+                    Перейдите в Badge Center, загрузите документы (или «Заполнить демо») и
+                    сгенерируйте бейдж — он появится здесь.
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        )}
         <TabsContent value="flow">
           <FlowchartViewer flow={ticket.flow} />
         </TabsContent>

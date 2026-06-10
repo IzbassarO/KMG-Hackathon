@@ -23,7 +23,7 @@ import { Progress } from "@/components/ui/progress";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { courseSections, getCourse, type CourseSection } from "@/lib/courses";
-import { youtubeEmbed } from "@/lib/media";
+import { videoSource } from "@/lib/media";
 
 const KIND_ICON = { text: FileText, video: PlayCircle, quiz: HelpCircle };
 
@@ -195,19 +195,24 @@ function SectionContent({
   }
 
   if (section.kind === "video") {
-    const embed = youtubeEmbed(section.videoUrl);
+    const media = videoSource(section.videoUrl);
     return (
       <div className="space-y-4">
         {title}
-        {embed ? (
+        {media?.type === "youtube" ? (
           <div className="aspect-video w-full overflow-hidden rounded-2xl border border-kmg-mist">
             <iframe
-              src={embed}
+              src={media.embed}
               title={section.title}
               className="h-full w-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
+          </div>
+        ) : media?.type === "file" ? (
+          <div className="aspect-video w-full overflow-hidden rounded-2xl border border-kmg-mist bg-black">
+            {/* Self-hosted: видео из /public (проигрывается прямо в проекте) */}
+            <video src={media.src} controls className="h-full w-full" preload="metadata" />
           </div>
         ) : (
           <div className="grid aspect-video w-full place-items-center rounded-2xl border border-dashed border-kmg-mist bg-kmg-paper text-center text-sm text-muted-foreground">
@@ -215,7 +220,7 @@ function SectionContent({
               <PlayCircle className="mx-auto mb-2 h-10 w-10 text-kmg-navy/40" />
               Видео скоро появится.
               <br />
-              Ссылку добавляют в <code className="text-kmg-navy">lib/media.ts</code>.
+              Ссылку или файл добавляют в <code className="text-kmg-navy">lib/media.ts</code>.
             </div>
           </div>
         )}

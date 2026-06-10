@@ -17,6 +17,7 @@ import {
 import type {
   ActivityEvent,
   AppNotification,
+  BadgeRecord,
   ChatMessage,
   ChatSession,
   CourseProgress,
@@ -44,6 +45,7 @@ type Action =
   | { type: "APPEND_CHAT_MESSAGE"; payload: { chatId: string; message: ChatMessage } }
   | { type: "UPSERT_USER"; payload: User }
   | { type: "UPSERT_ARTICLE"; payload: KnowledgeArticle }
+  | { type: "ISSUE_BADGE"; payload: BadgeRecord }
   | { type: "ADD_FEEDBACK"; payload: FeedbackEntry }
   | { type: "ADD_LOGIN"; payload: LoginEvent }
   | { type: "CLEAR_CHAT"; payload: { userId: string } }
@@ -166,6 +168,11 @@ function reducer(state: PortalState, action: Action): PortalState {
           : [action.payload, ...state.knowledge]
       };
     }
+    case "ISSUE_BADGE":
+      return {
+        ...state,
+        badges: { ...state.badges, [action.payload.employeeId]: action.payload }
+      };
     case "ADD_FEEDBACK":
       return { ...state, feedback: [action.payload, ...state.feedback] };
     case "ADD_LOGIN":
@@ -304,6 +311,8 @@ interface StoreContextValue {
     loginOnTimeRate: (userId: string) => number | null;
     clearChat: (userId: string) => void;
     syncMilestoneReports: (employeeId: string, day: number) => void;
+    issueBadge: (record: BadgeRecord) => void;
+    getBadge: (employeeId: string) => BadgeRecord | undefined;
   };
 }
 
@@ -463,13 +472,37 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           payload: { chatId: chat.id, message: userMessage }
         });
 
-        const { retrieve } = await import("./rag");
-        const result = retrieve(trimmed, state.knowledge);
+        // Сначала пробуем реальный чат-бот (Groq через /api/chat — порт digital_buddy.py).
+        // Если ключ не задан или ошибка — откатываемся на локальную TF-IDF заглушку.
+        let content: string;
+        let citations: ChatMessage["citations"];
+        try {
+          const res = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ question: trimmed })
+          });
+          const data = await res.json();
+          if (res.ok && data.answer) {
+            content = data.answer as string;
+            citations = ((data.sources ?? []) as { day: number; title: string }[]).map((s) => ({
+              articleId: `vnd-${s.day}`,
+              title: s.title
+            }));
+          } else {
+            throw new Error("fallback");
+          }
+        } catch {
+          const { retrieve } = await import("./rag");
+          const result = retrieve(trimmed, state.knowledge);
+          content = result.answer;
+          citations = result.citations;
+        }
         const assistantMessage: ChatMessage = {
           id: uid("m"),
           role: "assistant",
-          content: result.answer,
-          citations: result.citations,
+          content,
+          citations,
           createdAt: new Date().toISOString()
         };
         dispatch({
@@ -829,6 +862,39 @@ export function StoreProvider({ children }: { children: ReactNode }) {
           });
         }
         if (toAdd.length > 0) dispatch({ type: "ADD_NOTIFICATIONS", payload: toAdd });
+      },
+      issueBadge(record) {
+        dispatch({ type: "ISSUE_BADGE", payload: record });
+        // Завершаем шаг генерации в тикете «Бейдж и пропускной режим».
+        const ticket = state.tickets.find(
+          (t) => t.assigneeId === record.employeeId && t.tags.includes("badge")
+        );
+        if (ticket) {
+          const firstStep = ticket.flow.nodes.find(
+            (n) => n.type === "task" || n.type === "approval"
+          );
+          const task =
+            firstStep &&
+            state.tasks.find((t) => t.ticketId === ticket.id && t.nodeId === firstStep.id);
+          if (task && task.status !== "done") helpers.advanceTask(task.id, "done");
+        }
+        helpers.notify(record.employeeId, {
+          kind: "system",
+          title: "Бейдж готов",
+          body: "Ваш корпоративный бейдж сгенерирован и будет выдан в Badge Center.",
+          tone: "success",
+          href: ticket ? `/employee/tickets/${ticket.id}` : undefined
+        });
+        helpers.logActivity({
+          actorId: currentUser?.id ?? "system",
+          actorName: currentUser?.fullName ?? "HR",
+          message: `Сгенерировал бейдж для ${record.fio}`,
+          type: "ticket",
+          meta: ticket ? { ticket: ticket.code } : undefined
+        });
+      },
+      getBadge(employeeId) {
+        return state.badges[employeeId];
       }
     };
 

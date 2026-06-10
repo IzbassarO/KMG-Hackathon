@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { COURSES, courseSectionCount, type CourseLevel } from "@/lib/courses";
+import { getDayPlan } from "@/lib/program";
 
 const levelTone: Record<CourseLevel, string> = {
   Базовый: "bg-emerald-50 text-emerald-700",
@@ -23,6 +24,13 @@ export default function EmployeeLearningPage() {
   const [tab, setTab] = useState("all");
   if (!currentUser) return null;
   const uid = currentUser.id;
+
+  const day = helpers.getAdaptationDay(uid);
+  const todayCourseIds = new Set(
+    getDayPlan(day)
+      .today.map((i) => i.courseId)
+      .filter(Boolean) as string[]
+  );
 
   const filtered = COURSES.filter((c) => {
     const status = helpers.getCourseStatus(uid, c.id);
@@ -102,8 +110,11 @@ export default function EmployeeLearningPage() {
                     {course.category}
                   </div>
                   <CardHeader>
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-kmg-navy text-white shadow-elevated">
-                      <BookOpen className="h-5 w-5" />
+                    <div className="flex items-center gap-2">
+                      <div className="grid h-10 w-10 place-items-center rounded-xl bg-kmg-navy text-white shadow-elevated">
+                        <BookOpen className="h-5 w-5" />
+                      </div>
+                      {todayCourseIds.has(course.id) && <Badge variant="gold">Сегодня</Badge>}
                     </div>
                     <CardTitle className="mt-3 text-base leading-snug">{course.title}</CardTitle>
                     <CardDescription>{course.description}</CardDescription>

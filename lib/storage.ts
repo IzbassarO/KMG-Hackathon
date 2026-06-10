@@ -24,6 +24,7 @@ export function loadState(): PortalState {
       courseProgress: parsed.courseProgress ?? {},
       feedback: parsed.feedback ?? [],
       logins: parsed.logins ?? [],
+      badges: parsed.badges ?? {},
       hydrated: true
     };
   } catch (err) {
