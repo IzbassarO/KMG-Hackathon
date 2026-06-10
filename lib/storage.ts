@@ -25,6 +25,7 @@ export function loadState(): PortalState {
       feedback: parsed.feedback ?? [],
       logins: parsed.logins ?? [],
       badges: parsed.badges ?? {},
+      vectorDocs: parsed.vectorDocs ?? [],
       hydrated: true
     };
   } catch (err) {

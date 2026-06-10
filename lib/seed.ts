@@ -724,6 +724,24 @@ export function buildInitialState(): PortalState {
     onboarding: {},
     courseProgress: {},
     badges: {},
+    vectorDocs: [
+      {
+        id: "vd_pvtr",
+        name: "ПВТР_КМГ_2026.pdf",
+        sizeLabel: "1.8 МБ",
+        uploadedBy: "Айгерим Сатпаева",
+        uploadedAt: day(-12),
+        status: "indexed"
+      },
+      {
+        id: "vd_codex",
+        name: "Кодекс_деловой_этики.pdf",
+        sizeLabel: "0.9 МБ",
+        uploadedBy: "Нурлан Жумабаев",
+        uploadedAt: day(-5),
+        status: "indexed"
+      }
+    ],
     currentUserId: null,
     hydrated: false
   };

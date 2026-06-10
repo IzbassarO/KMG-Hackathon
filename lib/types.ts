@@ -122,6 +122,15 @@ export interface BadgeRecord {
   issuedAt: string;
 }
 
+export interface VectorDoc {
+  id: string;
+  name: string;
+  sizeLabel: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  status: "indexing" | "indexed";
+}
+
 export interface FeedbackEntry {
   id: string;
   userId: string;
@@ -235,6 +244,7 @@ export interface PortalState {
   feedback: FeedbackEntry[];
   logins: LoginEvent[];
   badges: Record<string, BadgeRecord>;
+  vectorDocs: VectorDoc[];
   /** прогресс адаптации по сотрудникам, ключ — userId */
   onboarding: Record<string, OnboardingProgress>;
   /** прогресс по курсам: userId → courseId → CourseProgress */

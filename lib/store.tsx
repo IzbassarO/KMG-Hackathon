@@ -29,7 +29,8 @@ import type {
   OnboardingTask,
   PortalState,
   Ticket,
-  User
+  User,
+  VectorDoc
 } from "./types";
 
 type Action =
@@ -46,6 +47,9 @@ type Action =
   | { type: "UPSERT_USER"; payload: User }
   | { type: "UPSERT_ARTICLE"; payload: KnowledgeArticle }
   | { type: "ISSUE_BADGE"; payload: BadgeRecord }
+  | { type: "ADD_VECTOR_DOC"; payload: VectorDoc }
+  | { type: "SET_VECTOR_DOC_STATUS"; payload: { id: string; status: VectorDoc["status"] } }
+  | { type: "REMOVE_VECTOR_DOC"; payload: { id: string } }
   | { type: "ADD_FEEDBACK"; payload: FeedbackEntry }
   | { type: "ADD_LOGIN"; payload: LoginEvent }
   | { type: "CLEAR_CHAT"; payload: { userId: string } }
@@ -173,6 +177,17 @@ function reducer(state: PortalState, action: Action): PortalState {
         ...state,
         badges: { ...state.badges, [action.payload.employeeId]: action.payload }
       };
+    case "ADD_VECTOR_DOC":
+      return { ...state, vectorDocs: [action.payload, ...state.vectorDocs] };
+    case "SET_VECTOR_DOC_STATUS":
+      return {
+        ...state,
+        vectorDocs: state.vectorDocs.map((d) =>
+          d.id === action.payload.id ? { ...d, status: action.payload.status } : d
+        )
+      };
+    case "REMOVE_VECTOR_DOC":
+      return { ...state, vectorDocs: state.vectorDocs.filter((d) => d.id !== action.payload.id) };
     case "ADD_FEEDBACK":
       return { ...state, feedback: [action.payload, ...state.feedback] };
     case "ADD_LOGIN":
@@ -313,6 +328,10 @@ interface StoreContextValue {
     syncMilestoneReports: (employeeId: string, day: number) => void;
     issueBadge: (record: BadgeRecord) => void;
     getBadge: (employeeId: string) => BadgeRecord | undefined;
+    addVectorDoc: (name: string, sizeLabel: string, uploadedBy: string) => string;
+    markVectorDocIndexed: (id: string) => void;
+    removeVectorDoc: (id: string) => void;
+    vectorDocs: () => VectorDoc[];
   };
 }
 
@@ -895,6 +914,32 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       },
       getBadge(employeeId) {
         return state.badges[employeeId];
+      },
+      // Симуляция загрузки документа в векторную базу: сохраняем ТОЛЬКО имя/метаданные.
+      // Файл не сохраняется и на ответы AI не влияет.
+      addVectorDoc(name, sizeLabel, uploadedBy) {
+        const id = uid("vd");
+        dispatch({
+          type: "ADD_VECTOR_DOC",
+          payload: {
+            id,
+            name,
+            sizeLabel,
+            uploadedBy,
+            uploadedAt: new Date().toISOString(),
+            status: "indexing"
+          }
+        });
+        return id;
+      },
+      markVectorDocIndexed(id) {
+        dispatch({ type: "SET_VECTOR_DOC_STATUS", payload: { id, status: "indexed" } });
+      },
+      removeVectorDoc(id) {
+        dispatch({ type: "REMOVE_VECTOR_DOC", payload: { id } });
+      },
+      vectorDocs() {
+        return [...state.vectorDocs].sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
       }
     };
 
