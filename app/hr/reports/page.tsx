@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import {
   AlertTriangle,
   BarChart3,
+  Brain,
   Clock,
   Download,
   Filter,
@@ -17,12 +18,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BarChart } from "@/components/charts/bar";
 import { Donut } from "@/components/charts/donut";
 import { Sparkline } from "@/components/charts/sparkline";
 import { useStore } from "@/lib/store";
 import { COURSES } from "@/lib/courses";
-import { formatDateTime } from "@/lib/utils";
+import { getSentiment, SENTIMENT_META } from "@/lib/sentiment";
+import { formatDateTime, initials } from "@/lib/utils";
 import type { TicketStatus } from "@/lib/types";
 
 const MOOD_META: Record<string, { label: string; color: string }> = {
@@ -226,6 +229,8 @@ export default function HrReportsPage() {
         </Card>
       </div>
 
+      <SentimentSection />
+
       <div className="grid gap-6 lg:grid-cols-2">
         <FeedbackCard />
         <AdaptationMetricsCard />
@@ -302,6 +307,93 @@ export default function HrReportsPage() {
           </table>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function SentimentSection() {
+  const { state } = useStore();
+  const employees = state.users.filter((u) => u.role === "employee");
+  const profiles = employees.map((u) => ({ user: u, s: getSentiment(u.id) }));
+  const n = profiles.length || 1;
+  const avg = (sel: (p: (typeof profiles)[number]) => number) =>
+    Math.round(profiles.reduce((acc, p) => acc + sel(p), 0) / n);
+  const avgScore = avg((p) => p.s.score);
+  const avgEngagement = avg((p) => p.s.engagement);
+  const atRisk = profiles.filter((p) => p.s.atRisk).length;
+  const orgTrend = Array.from({ length: 8 }, (_, i) =>
+    Math.round(profiles.reduce((acc, p) => acc + p.s.trend[i], 0) / n)
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Brain className="h-4 w-4 text-kmg-navy" /> Тональность и вовлечённость (Sentiment AI)
+        </CardTitle>
+        <CardDescription>
+          Анализ переписки сотрудников с Digital Buddy: тональность, вовлечённость и сигналы риска.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-5">
+        <div className="grid gap-4 sm:grid-cols-3">
+          <SentimentKpi label="Средняя тональность" value={`${avgScore}/100`} />
+          <SentimentKpi label="Средняя вовлечённость" value={`${avgEngagement}%`} />
+          <SentimentKpi label="В зоне риска" value={`${atRisk} из ${profiles.length}`} danger={atRisk > 0} />
+        </div>
+
+        <div>
+          <div className="mb-1 text-xs uppercase tracking-widest text-muted-foreground">
+            Динамика тональности по компании · 8 недель
+          </div>
+          <div className="w-full overflow-hidden">
+            <Sparkline values={orgTrend} width={760} height={90} />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          {profiles.map(({ user, s }) => {
+            const meta = SENTIMENT_META[s.label];
+            return (
+              <div
+                key={user.id}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-kmg-mist p-3"
+              >
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>{initials(user.fullName)}</AvatarFallback>
+                </Avatar>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-semibold text-kmg-ink">{user.fullName}</div>
+                  <div className="text-xs text-muted-foreground">{user.department}</div>
+                </div>
+                <div className="hidden w-40 items-center gap-2 sm:flex">
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-kmg-mist">
+                    <div className={`h-full ${meta.bar}`} style={{ width: `${s.score}%` }} />
+                  </div>
+                  <span className="w-8 text-right text-xs font-semibold text-kmg-navy">{s.score}</span>
+                </div>
+                <Badge variant={meta.badge}>{meta.ru}</Badge>
+                {s.atRisk && (
+                  <Badge variant="danger">
+                    <AlertTriangle className="h-3 w-3" /> Риск
+                  </Badge>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function SentimentKpi({ label, value, danger }: { label: string; value: string; danger?: boolean }) {
+  return (
+    <div className="rounded-2xl border border-kmg-mist bg-kmg-paper p-4">
+      <div className="text-xs uppercase tracking-widest text-muted-foreground">{label}</div>
+      <div className={`mt-1 text-2xl font-semibold ${danger ? "text-red-600" : "text-kmg-ink"}`}>
+        {value}
+      </div>
     </div>
   );
 }

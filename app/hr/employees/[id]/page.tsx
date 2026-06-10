@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
 import { TicketCard } from "@/components/shared/ticket-card";
+import { SentimentCard } from "@/components/shared/sentiment-card";
 import { useStore } from "@/lib/store";
 import { formatDate, initials, percent } from "@/lib/utils";
 
@@ -64,6 +65,8 @@ export default function EmployeeDetailPage({ params }: { params: Promise<{ id: s
           <Metric icon={Sparkles} label="Старт" value={user.startDate ? formatDate(user.startDate) : "—"} />
         </CardContent>
       </Card>
+
+      <SentimentCard userId={user.id} />
 
       <div>
         <h2 className="section-title">Тикеты</h2>

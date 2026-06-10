@@ -35,6 +35,7 @@ import {
 import { getCultureCard, getDayPlan } from "@/lib/program";
 import { OPEN_NOTIFICATIONS_EVENT } from "@/components/shared/notifications-sheet";
 import { BuddyAvatar } from "./buddy-avatar";
+import { BuddyLogo } from "./buddy-logo";
 import { BuddyCharacter } from "./buddy-character";
 import { BuddyTutorial } from "./buddy-tutorial";
 import { BuddyChat } from "./buddy-chat";
@@ -223,9 +224,7 @@ export function DigitalBuddy() {
                   <ChevronLeft className="h-5 w-5" />
                 </button>
               )}
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white/12 backdrop-blur">
-                <BuddyAvatar size={40} />
-              </div>
+              <BuddyLogo className="h-[72px] w-auto shrink-0 drop-shadow-md" />
               <div>
                 <div className="text-sm font-semibold">{BUDDY_NAME}</div>
                 <div className="text-xs text-white/70">
