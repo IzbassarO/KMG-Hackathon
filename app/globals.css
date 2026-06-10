@@ -128,6 +128,64 @@
   }
 }
 
+/* Тёмная тема: переопределяем жёстко заданные «светлые» утилиты КМГ.
+   Селекторы `.dark .x` (специфичность 0,2,0) перебивают одиночные утилиты Tailwind. */
+.dark .bg-white {
+  background-color: hsl(220 30% 13%);
+}
+.dark .bg-white\/80 {
+  background-color: hsl(220 30% 13% / 0.85);
+}
+.dark .bg-white\/70 {
+  background-color: hsl(220 30% 13% / 0.7);
+}
+.dark .bg-white\/10,
+.dark .bg-white\/15 {
+  background-color: hsl(0 0% 100% / 0.08);
+}
+.dark .bg-kmg-paper {
+  background-color: hsl(220 33% 9%);
+}
+.dark .bg-kmg-mist,
+.dark .bg-kmg-mist\/60,
+.dark .bg-kmg-mist\/40 {
+  background-color: hsl(220 22% 20%);
+}
+.dark .border-kmg-mist,
+.dark .border-kmg-mist\/80 {
+  border-color: hsl(220 20% 26%);
+}
+.dark .text-kmg-ink {
+  color: hsl(220 14% 94%);
+}
+.dark .text-kmg-ink\/80,
+.dark .text-kmg-ink\/90 {
+  color: hsl(220 14% 94% / 0.92);
+}
+.dark .hover\:text-kmg-ink:hover {
+  color: hsl(220 14% 94%);
+}
+.dark .text-kmg-navy {
+  color: #7db0e6;
+}
+.dark .text-kmg-navy\/40,
+.dark .text-kmg-navy\/60,
+.dark .text-kmg-navy\/70,
+.dark .text-kmg-navy\/80 {
+  color: #7db0e6;
+}
+.dark .gradient-paper {
+  background-image: linear-gradient(180deg, hsl(220 33% 9%), hsl(220 30% 11%));
+}
+.dark .glass-card {
+  background-color: hsl(220 30% 13% / 0.7);
+  border-color: hsl(220 20% 26%);
+}
+.dark .shadow-card,
+.dark .shadow-elevated {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+
 .react-flow__node-default {
   font-family: var(--font-inter), system-ui, sans-serif;
 }

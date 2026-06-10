@@ -12,9 +12,18 @@ import {
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 import { flowNodeTypes, type FlowReactNode } from "./nodes";
+import { stepNodes } from "@/lib/flow";
 import type { Flow } from "@/lib/types";
 
 export function FlowchartViewer({ flow }: { flow: Flow }) {
+  // Обычно прогресс считаем по исполняемым шагам; в общей карте (одни milestone) —
+  // по этапам-вехам, чтобы не показывать «0 из 0».
+  const taskSteps = stepNodes(flow);
+  const steps = taskSteps.length > 0 ? taskSteps : flow.nodes.filter((n) => n.type === "milestone");
+  const doneSteps = steps.filter((n) => n.status === "done").length;
+  const availableSteps = steps.filter((n) => n.status === "active").length;
+  const pct = steps.length ? Math.round((doneSteps / steps.length) * 100) : 0;
+
   const nodes = useMemo<FlowReactNode[]>(
     () =>
       flow.nodes.map((node) => ({
@@ -60,7 +69,21 @@ export function FlowchartViewer({ flow }: { flow: Flow }) {
   );
 
   return (
-    <div className="h-[560px] w-full overflow-hidden rounded-2xl border border-kmg-mist bg-white shadow-card">
+    <div className="overflow-hidden rounded-2xl border border-kmg-mist bg-white shadow-card">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-kmg-mist px-4 py-3">
+        <div className="flex items-center gap-3">
+          <span className="text-sm font-semibold text-kmg-ink">
+            Прогресс: {doneSteps} из {steps.length} шагов
+          </span>
+          <span className="text-sm font-semibold text-kmg-navy">{pct}%</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
+          <Legend color="bg-emerald-500" label={`Готово · ${doneSteps}`} />
+          <Legend color="bg-kmg-gold" label={`Доступно · ${availableSteps}`} />
+          <Legend color="bg-kmg-mist" label={`Заблокировано · ${steps.length - doneSteps - availableSteps}`} />
+        </div>
+      </div>
+      <div className="h-[520px] w-full">
       <ReactFlowProvider>
         <ReactFlow
           nodes={nodes}
@@ -93,6 +116,16 @@ export function FlowchartViewer({ flow }: { flow: Flow }) {
           />
         </ReactFlow>
       </ReactFlowProvider>
+      </div>
     </div>
+  );
+}
+
+function Legend({ color, label }: { color: string; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span className={`h-2.5 w-2.5 rounded-full ${color}`} />
+      {label}
+    </span>
   );
 }

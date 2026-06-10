@@ -3,7 +3,7 @@
 import { use } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarDays, GitBranch, ListChecks } from "lucide-react";
+import { ArrowLeft, CalendarDays, GitBranch, ListChecks, Lock, Wand2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -68,6 +68,13 @@ export default function EmployeeTicketPage({ params }: { params: Promise<{ id: s
             <Button variant="accent" className="w-full">
               Загрузить документ
             </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => helpers.autofillTicket(ticket.id)}
+            >
+              <Wand2 className="h-4 w-4" /> Автозаполнить (демо)
+            </Button>
           </div>
         </CardContent>
       </Card>
@@ -78,44 +85,37 @@ export default function EmployeeTicketPage({ params }: { params: Promise<{ id: s
         <CardHeader>
           <CardTitle>Мои действия</CardTitle>
           <CardDescription>
-            Задачи, где вы — исполнитель. Завершайте по мере прохождения шагов.
+            Шаг открывается только после завершения предыдущего. Параллельные ветки
+            проходятся независимо.
           </CardDescription>
         </CardHeader>
         <CardContent className="divide-y divide-kmg-mist">
           {tasks.map((task) => {
             const node = ticket.flow.nodes.find((n) => n.id === task.nodeId);
             const isForEmployee = node?.assigneeRole !== "hr";
+            const done = node?.status === "done";
+            const locked = node?.status === "pending";
             return (
               <div key={task.id} className="flex flex-wrap items-center gap-3 py-3">
                 <div className="flex-1">
                   <div className="text-sm font-semibold text-kmg-ink">{task.title}</div>
                   <div className="text-xs text-muted-foreground">{task.description}</div>
                 </div>
-                <Badge
-                  variant={
-                    task.status === "done"
-                      ? "success"
-                      : task.status === "in_progress"
-                        ? "warning"
-                        : "outline"
-                  }
-                >
-                  {task.status === "done"
-                    ? "Готово"
-                    : task.status === "in_progress"
-                      ? "В работе"
-                      : "Ожидает"}
+                <Badge variant={done ? "success" : locked ? "outline" : "warning"}>
+                  {done ? "Готово" : locked ? "Заблокировано" : "Доступно"}
                 </Badge>
-                {isForEmployee ? (
+                {done ? null : locked ? (
+                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                    <Lock className="h-3.5 w-3.5" /> Завершите предыдущий шаг
+                  </span>
+                ) : (
                   <Button
                     variant="accent"
                     size="sm"
                     onClick={() => helpers.advanceTask(task.id, "done")}
                   >
-                    Я выполнил
+                    {isForEmployee ? "Я выполнил" : "Отметить (демо)"}
                   </Button>
-                ) : (
-                  <Badge variant="info">На стороне HR</Badge>
                 )}
               </div>
             );

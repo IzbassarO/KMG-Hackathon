@@ -21,7 +21,7 @@ function statusStyles(status?: FlowNode["status"]) {
       return {
         ring: "ring-kmg-gold",
         accent: "text-amber-600",
-        label: "В работе",
+        label: "Доступно",
         Icon: Loader2
       };
     case "blocked":
@@ -35,7 +35,7 @@ function statusStyles(status?: FlowNode["status"]) {
       return {
         ring: "ring-kmg-mist",
         accent: "text-kmg-navy/60",
-        label: "Ожидает",
+        label: "Откроется позже",
         Icon: Lock
       };
   }

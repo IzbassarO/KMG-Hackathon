@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useT } from "@/components/providers/preferences";
 import { KmgLogo } from "@/components/brand/logo";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
@@ -34,38 +35,39 @@ interface NavItem {
 }
 
 const hrNav: NavItem[] = [
-  { href: "/hr/dashboard", label: "Обзор", icon: LayoutDashboard },
-  { href: "/hr/tickets", label: "Тикеты онбординга", icon: Workflow, badge: "Flow" },
-  { href: "/hr/employees", label: "Сотрудники", icon: Users },
-  { href: "/hr/mentorship", label: "Менторство", icon: Heart },
-  { href: "/hr/calendar", label: "Календарь", icon: CalendarDays },
-  { href: "/hr/reports", label: "Аналитика", icon: BarChart3, badge: "Live" },
-  { href: "/hr/documents", label: "Документы", icon: FolderArchive },
-  { href: "/hr/knowledge", label: "База знаний", icon: BookOpen },
-  { href: "/hr/assistant", label: "AI-Куратор", icon: Sparkles, badge: "RAG" }
+  { href: "/hr/dashboard", label: "nav.overview", icon: LayoutDashboard },
+  { href: "/hr/tickets", label: "nav.tickets", icon: Workflow, badge: "Flow" },
+  { href: "/hr/employees", label: "nav.employees", icon: Users },
+  { href: "/hr/mentorship", label: "nav.hrMentorship", icon: Heart },
+  { href: "/hr/calendar", label: "nav.calendar", icon: CalendarDays },
+  { href: "/hr/reports", label: "nav.reports", icon: BarChart3, badge: "Live" },
+  { href: "/hr/learning", label: "nav.hrLearning", icon: GraduationCap },
+  { href: "/hr/documents", label: "nav.documents", icon: FolderArchive },
+  { href: "/hr/knowledge", label: "nav.knowledge", icon: BookOpen },
+  { href: "/hr/assistant", label: "nav.assistantHr", icon: Sparkles, badge: "RAG" }
 ];
 
 const hrSecondary: NavItem[] = [
-  { href: "/hr/settings", label: "Настройки", icon: Settings }
+  { href: "/hr/settings", label: "nav.settings", icon: Settings }
 ];
 
 const empNav: NavItem[] = [
-  { href: "/employee/dashboard", label: "Мой день", icon: LayoutDashboard },
-  { href: "/employee/journey", label: "Мой путь", icon: Compass, badge: "Flow" },
-  { href: "/employee/tasks", label: "Задачи", icon: CalendarClock },
-  { href: "/employee/calendar", label: "Календарь", icon: CalendarDays },
-  { href: "/employee/mentorship", label: "Менторство 30/60/90", icon: Heart },
-  { href: "/employee/learning", label: "Обучение", icon: GraduationCap },
-  { href: "/employee/documents", label: "Документы", icon: FolderArchive },
-  { href: "/employee/knowledge", label: "База знаний", icon: BookOpen },
-  { href: "/employee/assistant", label: "AI-Ассистент", icon: Wand2, badge: "RAG" }
+  { href: "/employee/dashboard", label: "nav.dashboard", icon: LayoutDashboard },
+  { href: "/employee/journey", label: "nav.journey", icon: Compass, badge: "Flow" },
+  { href: "/employee/tasks", label: "nav.tasks", icon: CalendarClock },
+  { href: "/employee/calendar", label: "nav.calendar", icon: CalendarDays },
+  { href: "/employee/mentorship", label: "nav.mentorship", icon: Heart },
+  { href: "/employee/learning", label: "nav.learning", icon: GraduationCap },
+  { href: "/employee/documents", label: "nav.documents", icon: FolderArchive },
+  { href: "/employee/knowledge", label: "nav.knowledge", icon: BookOpen },
+  { href: "/employee/assistant", label: "nav.assistant", icon: Wand2, badge: "RAG" }
 ];
 
 const empSecondary: NavItem[] = [
-  { href: "/employee/team", label: "Моя команда", icon: Building2 },
-  { href: "/employee/feedback", label: "Фидбэк и пульс", icon: HeartHandshake },
-  { href: "/employee/help", label: "Помощь и FAQ", icon: HelpCircle },
-  { href: "/employee/settings", label: "Настройки", icon: Wrench }
+  { href: "/employee/team", label: "nav.team", icon: Building2 },
+  { href: "/employee/feedback", label: "nav.feedback", icon: HeartHandshake },
+  { href: "/employee/help", label: "nav.help", icon: HelpCircle },
+  { href: "/employee/settings", label: "nav.settings", icon: Wrench }
 ];
 
 export function Sidebar({
@@ -76,6 +78,7 @@ export function Sidebar({
   mobile?: boolean;
 }) {
   const pathname = usePathname();
+  const t = useT();
   const main = context === "hr" ? hrNav : empNav;
   const secondary = context === "hr" ? hrSecondary : empSecondary;
 
@@ -92,7 +95,7 @@ export function Sidebar({
         </Link>
       </div>
       <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3 py-4 scrollbar-thin">
-        <NavSectionTitle>Основное</NavSectionTitle>
+        <NavSectionTitle>{t("common.main")}</NavSectionTitle>
         {main.map((item) => (
           <NavLink
             key={item.href}
@@ -100,7 +103,7 @@ export function Sidebar({
             active={pathname === item.href || pathname?.startsWith(item.href + "/")}
           />
         ))}
-        <NavSectionTitle className="mt-4">Сервис</NavSectionTitle>
+        <NavSectionTitle className="mt-4">{t("common.service")}</NavSectionTitle>
         {secondary.map((item) => (
           <NavLink key={item.href} item={item} active={pathname === item.href} />
         ))}
@@ -144,9 +147,11 @@ function NavSectionTitle({
 
 function NavLink({ item, active }: { item: NavItem; active?: boolean }) {
   const Icon = item.icon;
+  const t = useT();
   return (
     <Link
       href={item.href}
+      data-tour={item.href}
       className={cn(
         "group flex items-center justify-between rounded-xl px-3 py-2 text-sm font-medium transition-all",
         active
@@ -156,7 +161,7 @@ function NavLink({ item, active }: { item: NavItem; active?: boolean }) {
     >
       <span className="flex items-center gap-3">
         <Icon className={cn("h-4 w-4", active ? "text-white" : "text-kmg-navy")} />
-        {item.label}
+        {t(item.label)}
       </span>
       {item.badge && (
         <span

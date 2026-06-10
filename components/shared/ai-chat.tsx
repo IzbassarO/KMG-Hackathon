@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { Loader2, Send, Sparkles, BookOpen } from "lucide-react";
+import { Loader2, Send, Sparkles, BookOpen, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,7 +65,20 @@ export function AiChat({ context }: { context: "hr" | "employee" }) {
             </div>
           </div>
         </div>
-        <Badge variant="gold">RAG · {state.knowledge.length} статей</Badge>
+        <div className="flex items-center gap-2">
+          {chat && chat.messages.length > 0 && (
+            <button
+              onClick={() => {
+                if (currentUser) helpers.clearChat(currentUser.id);
+                setChatId(null);
+              }}
+              className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1 text-xs font-medium text-white/90 transition hover:bg-white/20"
+            >
+              <Trash2 className="h-3.5 w-3.5" /> Очистить
+            </button>
+          )}
+          <Badge variant="gold">RAG · {state.knowledge.length} статей</Badge>
+        </div>
       </div>
       <div
         ref={scrollRef}

@@ -2,10 +2,13 @@
 
 import { useMemo } from "react";
 import {
+  AlertTriangle,
   BarChart3,
   Clock,
   Download,
   Filter,
+  HeartHandshake,
+  LogIn,
   TrendingUp,
   Users,
   Sparkles
@@ -18,7 +21,16 @@ import { BarChart } from "@/components/charts/bar";
 import { Donut } from "@/components/charts/donut";
 import { Sparkline } from "@/components/charts/sparkline";
 import { useStore } from "@/lib/store";
+import { COURSES } from "@/lib/courses";
+import { formatDateTime } from "@/lib/utils";
 import type { TicketStatus } from "@/lib/types";
+
+const MOOD_META: Record<string, { label: string; color: string }> = {
+  great: { label: "Супер", color: "bg-emerald-500" },
+  good: { label: "Хорошо", color: "bg-sky-500" },
+  meh: { label: "Так себе", color: "bg-amber-500" },
+  bad: { label: "Сложно", color: "bg-red-500" }
+};
 
 const statusColors: Record<TicketStatus, string> = {
   draft: "#94A3B8",
@@ -37,7 +49,7 @@ const statusLabels: Record<TicketStatus, string> = {
 };
 
 export default function HrReportsPage() {
-  const { state } = useStore();
+  const { state, helpers } = useStore();
 
   const statusDistribution = useMemo(() => {
     const buckets: Record<TicketStatus, number> = {
@@ -214,6 +226,11 @@ export default function HrReportsPage() {
         </Card>
       </div>
 
+      <div className="grid gap-6 lg:grid-cols-2">
+        <FeedbackCard />
+        <AdaptationMetricsCard />
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle>SLA по тикетам</CardTitle>
@@ -286,6 +303,129 @@ export default function HrReportsPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function FeedbackCard() {
+  const { state, helpers } = useStore();
+  const feedback = helpers.feedbackAll();
+  const total = feedback.length;
+  const userName = (id: string) => state.users.find((u) => u.id === id)?.fullName ?? "Сотрудник";
+  const moodCounts = feedback.reduce(
+    (acc, f) => {
+      if (f.mood) acc[f.mood] = (acc[f.mood] ?? 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
+  const withComments = feedback.filter((f) => f.comment).slice(0, 4);
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <HeartHandshake className="h-4 w-4 text-kmg-gold" /> Фидбэк и пульс
+        </CardTitle>
+        <CardDescription>Настроение и комментарии сотрудников ({total} ответов).</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {total === 0 ? (
+          <div className="rounded-xl border border-dashed border-kmg-mist p-6 text-center text-sm text-muted-foreground">
+            Пока нет ответов.
+          </div>
+        ) : (
+          <>
+            <div className="space-y-1.5">
+              {Object.entries(MOOD_META).map(([key, meta]) => {
+                const count = moodCounts[key] ?? 0;
+                const pct = total ? Math.round((count / total) * 100) : 0;
+                return (
+                  <div key={key} className="flex items-center gap-2">
+                    <span className="w-20 text-xs text-muted-foreground">{meta.label}</span>
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-kmg-mist">
+                      <div className={`h-full ${meta.color}`} style={{ width: `${pct}%` }} />
+                    </div>
+                    <span className="w-8 text-right text-xs font-semibold text-kmg-navy">{count}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="space-y-2">
+              {withComments.map((f) => (
+                <div key={f.id} className="rounded-xl border border-kmg-mist p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-sm font-semibold text-kmg-ink">{userName(f.userId)}</span>
+                    <Badge variant={f.kind === "idea" ? "gold" : "secondary"}>
+                      {f.kind === "idea" ? "Идея" : "Пульс"}
+                    </Badge>
+                  </div>
+                  <div className="mt-0.5 text-sm text-muted-foreground">{f.comment}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function AdaptationMetricsCard() {
+  const { state, helpers } = useStore();
+  const employees = state.users.filter((u) => u.role === "employee");
+  const requiredTotal = COURSES.filter((c) => c.category === "Обязательный").length;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Метрики адаптации</CardTitle>
+        <CardDescription>Курсы, вход в систему и риски по сотрудникам.</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {employees.map((emp) => {
+          const day = helpers.getAdaptationDay(emp.id);
+          const requiredDone = COURSES.filter(
+            (c) => c.category === "Обязательный" && helpers.isCourseComplete(emp.id, c.id)
+          ).length;
+          const lastLogin = helpers.lastLogin(emp.id);
+          const onTime = helpers.loginOnTimeRate(emp.id);
+          const atRisk = day >= 14 && requiredDone < requiredTotal;
+          return (
+            <div key={emp.id} className="rounded-xl border border-kmg-mist p-3">
+              <div className="flex items-center justify-between gap-2">
+                <div className="text-sm font-semibold text-kmg-ink">{emp.fullName}</div>
+                {atRisk ? (
+                  <Badge variant="danger">
+                    <AlertTriangle className="h-3 w-3" /> Риск
+                  </Badge>
+                ) : (
+                  <Badge variant="success">По плану</Badge>
+                )}
+              </div>
+              <div className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                <span>
+                  Обязат. курсы:{" "}
+                  <span className="font-semibold text-kmg-ink">
+                    {requiredDone}/{requiredTotal}
+                  </span>
+                </span>
+                <span className="inline-flex items-center gap-1">
+                  <LogIn className="h-3 w-3" /> Вход:{" "}
+                  {lastLogin ? formatDateTime(lastLogin) : "—"}
+                </span>
+                <span>
+                  Пунктуальность:{" "}
+                  <span className="font-semibold text-kmg-ink">
+                    {onTime === null ? "—" : `${onTime}%`}
+                  </span>
+                </span>
+                <span>День {day}</span>
+              </div>
+            </div>
+          );
+        })}
+      </CardContent>
+    </Card>
   );
 }
 

@@ -15,7 +15,17 @@ export function loadState(): PortalState {
       return initial;
     }
     const parsed = JSON.parse(raw) as PortalState;
-    return { ...parsed, hydrated: true };
+    return {
+      ...parsed,
+      onboarding: parsed.onboarding ?? {},
+      notifications: parsed.notifications ?? [],
+      messages: parsed.messages ?? [],
+      meetingRequests: parsed.meetingRequests ?? [],
+      courseProgress: parsed.courseProgress ?? {},
+      feedback: parsed.feedback ?? [],
+      logins: parsed.logins ?? [],
+      hydrated: true
+    };
   } catch (err) {
     console.warn("[storage] failed to parse, regenerating", err);
     const initial = buildInitialState();

@@ -110,6 +110,36 @@ export interface ActivityEvent {
   meta?: Record<string, string>;
 }
 
+export interface FeedbackEntry {
+  id: string;
+  userId: string;
+  kind: "pulse" | "idea";
+  mood?: string;
+  comment?: string;
+  pulse?: Record<string, string>;
+  createdAt: string;
+}
+
+export interface LoginEvent {
+  id: string;
+  userId: string;
+  at: string;
+}
+
+export type NotificationKind = "task" | "meeting" | "stage" | "hr" | "system";
+
+export interface AppNotification {
+  id: string;
+  userId: string;
+  kind: NotificationKind;
+  title: string;
+  body?: string;
+  createdAt: string;
+  read: boolean;
+  tone?: "navy" | "gold" | "success" | "warning" | "danger" | "info";
+  href?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "assistant" | "system";
@@ -127,6 +157,59 @@ export interface ChatSession {
   updatedAt: string;
 }
 
+export interface PlanCompletion {
+  /** день адаптации, на который пришлось выполнение */
+  day: number;
+  /** ISO-время отметки о выполнении */
+  at: string;
+}
+
+export interface CourseProgress {
+  /** id пройденных секций (прочитано/просмотрено/тест сдан) */
+  completedSections: string[];
+  /** результаты тестов по секциям */
+  quiz: Record<string, { score: number; total: number; passed: boolean }>;
+  /** когда курс полностью завершён */
+  completedAt?: string;
+}
+
+export interface OnboardingProgress {
+  /** ISO-дата первого открытия портала = День 1 роадмапа */
+  startedAt: string;
+  /** demo-оверрайд текущего дня для презентации; null/undefined = реальный день */
+  dayOverride?: number | null;
+  /** выполненные пункты плана (см. lib/program.ts): id → когда выполнено */
+  completions?: Record<string, PlanCompletion>;
+}
+
+export interface DirectMessage {
+  id: string;
+  /** сотрудник, которому принадлежит переписка (онбординг-пользователь) */
+  employeeId: string;
+  fromId: string;
+  toId: string;
+  text: string;
+  createdAt: string;
+}
+
+export type MeetingStatus = "pending" | "accepted" | "rejected";
+
+export interface MeetingRequest {
+  id: string;
+  employeeId: string;
+  hrId: string;
+  topic: string;
+  /** желаемое время сотрудника */
+  preferredAt?: string;
+  status: MeetingStatus;
+  /** подтверждённое HR время встречи */
+  scheduledAt?: string;
+  /** ответ/причина от HR */
+  hrNote?: string;
+  createdAt: string;
+  decidedAt?: string;
+}
+
 export interface PortalState {
   users: User[];
   tickets: Ticket[];
@@ -134,6 +217,15 @@ export interface PortalState {
   knowledge: KnowledgeArticle[];
   activity: ActivityEvent[];
   chats: ChatSession[];
+  notifications: AppNotification[];
+  messages: DirectMessage[];
+  meetingRequests: MeetingRequest[];
+  feedback: FeedbackEntry[];
+  logins: LoginEvent[];
+  /** прогресс адаптации по сотрудникам, ключ — userId */
+  onboarding: Record<string, OnboardingProgress>;
+  /** прогресс по курсам: userId → courseId → CourseProgress */
+  courseProgress: Record<string, Record<string, CourseProgress>>;
   currentUserId: string | null;
   hydrated: boolean;
 }

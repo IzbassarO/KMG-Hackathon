@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
-import { WelcomeWizard } from "@/components/shared/welcome-wizard";
+import { DigitalBuddy } from "@/components/buddy/digital-buddy";
 import { useStore } from "@/lib/store";
 import { Loader2 } from "lucide-react";
 
@@ -47,7 +47,7 @@ export function AppShell({
         <TopBar context={context} />
         <main className="flex-1 px-4 py-6 md:px-6 md:py-8">{children}</main>
       </div>
-      {context === "employee" && <WelcomeWizard />}
+      {context === "employee" && <DigitalBuddy />}
     </div>
   );
 }

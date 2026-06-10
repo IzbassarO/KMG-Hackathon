@@ -17,6 +17,8 @@ import {
   ShieldCheck
 } from "lucide-react";
 import { KmgLogo } from "@/components/brand/logo";
+import { LanguageThemeSwitcher } from "@/components/shell/language-switcher";
+import { usePreferences } from "@/components/providers/preferences";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -56,6 +58,7 @@ const metrics = [
 
 export default function LandingPage() {
   const { state, currentUser, signIn } = useStore();
+  const { t } = usePreferences();
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<Role>("hr");
 
@@ -91,15 +94,11 @@ export default function LandingPage() {
       <div className="relative">
         <header className="container flex items-center justify-between py-6">
           <KmgLogo />
-          <div className="hidden items-center gap-3 md:flex">
-            <Badge variant="outline">v0.1 · Hackathon Edition</Badge>
-            <Link
-              href="https://www.kmg.kz"
-              target="_blank"
-              className="text-sm font-medium text-kmg-navy hover:underline"
-            >
-              kmg.kz
-            </Link>
+          <div className="flex items-center gap-2 md:gap-3">
+            <Badge variant="outline" className="hidden md:inline-flex">
+              KMG Hackathon Edition
+            </Badge>
+            <LanguageThemeSwitcher />
           </div>
         </header>
 
@@ -164,9 +163,9 @@ export default function LandingPage() {
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-xs uppercase tracking-widest text-white/60">
-                      Вход в портал
+                      {t("landing.enterPortal")}
                     </div>
-                    <h2 className="mt-1 text-2xl font-semibold">Выберите роль</h2>
+                    <h2 className="mt-1 text-2xl font-semibold">{t("landing.selectRoleTitle")}</h2>
                   </div>
                   <Building2 className="h-7 w-7 text-kmg-gold-light" />
                 </div>
@@ -175,21 +174,21 @@ export default function LandingPage() {
                     selected={selectedRole === "hr"}
                     onClick={() => setSelectedRole("hr")}
                     title="HR"
-                    description="Конструктор онбординга"
+                    description={t("landing.hrDesc")}
                     icon={Users}
                   />
                   <RoleTile
                     selected={selectedRole === "employee"}
                     onClick={() => setSelectedRole("employee")}
-                    title="Сотрудник"
-                    description="Личный путь адаптации"
+                    title={t("landing.roleEmployee")}
+                    description={t("landing.empDesc")}
                     icon={GraduationCap}
                   />
                 </div>
               </div>
               <div className="space-y-3 p-6">
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">
-                  Демо-аккаунты ({selectedRole === "hr" ? "HR" : "сотрудники"})
+                  {t("landing.demoAccounts")}
                 </div>
                 <div className="grid gap-2">
                   {candidates.map((user) => (
@@ -220,10 +219,11 @@ export default function LandingPage() {
                   className="w-full"
                   onClick={() => candidates[0] && signIn(candidates[0].id)}
                 >
-                  <CheckCircle2 className="h-4 w-4" /> Войти как {candidates[0]?.fullName.split(" ")[0]}
+                  <CheckCircle2 className="h-4 w-4" /> {t("landing.signInAs")}{" "}
+                  {candidates[0]?.fullName.split(" ")[0]}
                 </Button>
                 <div className="text-center text-xs text-muted-foreground">
-                  Все данные хранятся локально в этом браузере (localStorage).
+                  {t("landing.localData")}
                 </div>
               </div>
             </CardContent>

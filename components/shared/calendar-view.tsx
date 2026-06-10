@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +13,9 @@ export interface CalendarEvent {
   title: string;
   tone: "navy" | "gold" | "success" | "warning" | "danger" | "info";
   meta?: string;
+  /** короткая метка типа (Задача / Курс / Событие …) */
+  label?: string;
+  done?: boolean;
 }
 
 const WEEKDAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
@@ -147,6 +150,7 @@ export function CalendarView({
               const isToday = key === new Date().toDateString();
               const isSelected = key === selected;
               const dayEvents = byDate.get(key) ?? [];
+              const allDone = dayEvents.length > 0 && dayEvents.every((e) => e.done);
               return (
                 <button
                   key={idx}
@@ -157,9 +161,13 @@ export function CalendarView({
                       ? "border-transparent text-muted-foreground/60"
                       : "border-kmg-mist text-kmg-ink hover:border-kmg-navy/40",
                     isSelected && "border-kmg-navy bg-kmg-navy/5",
+                    allDone && !isSelected && "border-emerald-200 bg-emerald-50/50",
                     isToday && "ring-2 ring-kmg-gold/60"
                   )}
                 >
+                  {allDone && (
+                    <CheckCircle2 className="absolute right-1 top-1 h-3.5 w-3.5 text-emerald-500" />
+                  )}
                   <span
                     className={cn(
                       "text-xs font-semibold",
@@ -216,12 +224,15 @@ export function CalendarView({
                 key={event.id}
                 className="flex items-start gap-2 rounded-xl border border-kmg-mist bg-white p-3"
               >
-                <Badge variant={event.tone}>{event.tone}</Badge>
-                <div>
-                  <div className="text-sm font-semibold text-kmg-ink">{event.title}</div>
-                  {event.meta && (
-                    <div className="text-xs text-muted-foreground">{event.meta}</div>
-                  )}
+                <Badge variant={event.tone}>{event.label ?? "Событие"}</Badge>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 text-sm font-semibold text-kmg-ink">
+                    {event.done && <CheckCircle2 className="h-3.5 w-3.5 shrink-0 text-emerald-600" />}
+                    <span className={cn(event.done && "text-muted-foreground line-through")}>
+                      {event.title}
+                    </span>
+                  </div>
+                  {event.meta && <div className="text-xs text-muted-foreground">{event.meta}</div>}
                 </div>
               </div>
             ))}

@@ -1,5 +1,6 @@
 import type {
   ActivityEvent,
+  AppNotification,
   ChatSession,
   Flow,
   KnowledgeArticle,
@@ -8,11 +9,18 @@ import type {
   Ticket,
   User
 } from "./types";
+import { progressFor, resolveFlow, ticketStatusFor } from "./flow";
 
 const today = new Date();
 const day = (offset: number) => {
   const d = new Date(today);
   d.setDate(d.getDate() + offset);
+  return d.toISOString();
+};
+const at = (offset: number, h: number, m: number) => {
+  const d = new Date(today);
+  d.setDate(d.getDate() + offset);
+  d.setHours(h, m, 0, 0);
   return d.toISOString();
 };
 
@@ -438,7 +446,16 @@ const tickets: Ticket[] = [
   }
 ];
 
-const tasks: OnboardingTask[] = tickets.flatMap((ticket) =>
+// Приводим стартовые статусы узлов к модели зависимостей (gating): «готово» берём
+// из авторских статусов, остальное вычисляем — доступно (active) / заблокировано (pending).
+const resolvedTickets: Ticket[] = tickets.map((t) => {
+  const done = new Set(t.flow.nodes.filter((n) => n.status === "done").map((n) => n.id));
+  const flow = resolveFlow(t.flow, done);
+  const progress = progressFor(flow, done);
+  return { ...t, flow, progress, status: ticketStatusFor(progress, t.status) };
+});
+
+const tasks: OnboardingTask[] = resolvedTickets.flatMap((ticket) =>
   ticket.flow.nodes
     .filter((node) => node.type === "task" || node.type === "approval")
     .map((node) => ({
@@ -600,14 +617,72 @@ const chats: ChatSession[] = [
   }
 ];
 
+const notifications: AppNotification[] = [
+  ...users
+    .filter((u) => u.role === "employee")
+    .map<AppNotification>((u) => ({
+      id: `n_welcome_${u.id}`,
+      userId: u.id,
+      kind: "hr",
+      title: "Сообщение от HR-куратора",
+      body: "Добро пожаловать в КМГ! Я ваш HR-куратор по адаптации. Если возникнут вопросы — пишите, всегда помогу.",
+      createdAt: day(0),
+      read: false,
+      tone: "navy"
+    })),
+  {
+    id: "n_geo_stage",
+    userId: "u_emp_geo",
+    kind: "stage",
+    title: "Шаг тикета принят",
+    body: "Тикет ONB-1042: «Загрузить скан удостоверения» проверен отделом кадров.",
+    createdAt: day(0),
+    read: false,
+    tone: "success",
+    href: "/employee/tickets/t_docs_001"
+  },
+  {
+    id: "n_geo_meeting",
+    userId: "u_emp_geo",
+    kind: "meeting",
+    title: "Напоминание о встрече",
+    body: "Сегодня в 16:00 — Welcome-кофе с командой подразделения.",
+    createdAt: day(0),
+    read: false,
+    tone: "gold"
+  }
+];
+
 export function buildInitialState(): PortalState {
   return {
     users,
-    tickets,
+    tickets: resolvedTickets,
     tasks,
+    notifications,
     knowledge,
     activity,
     chats,
+    messages: [],
+    meetingRequests: [],
+    feedback: [
+      {
+        id: "fb_geo_1",
+        userId: "u_emp_geo",
+        kind: "pulse",
+        mood: "good",
+        comment: "Первая неделя понятная, наставник помогает. Хочется больше практики по GIS.",
+        pulse: { q1: "В целом понятный", q2: "В целом да", q3: "Обучение" },
+        createdAt: day(-1)
+      }
+    ],
+    logins: [
+      { id: "lg_geo_1", userId: "u_emp_geo", at: at(-1, 8, 52) },
+      { id: "lg_geo_2", userId: "u_emp_geo", at: at(-2, 9, 8) },
+      { id: "lg_geo_3", userId: "u_emp_geo", at: at(-3, 11, 4) },
+      { id: "lg_eng_1", userId: "u_emp_eng", at: at(-1, 9, 40) }
+    ],
+    onboarding: {},
+    courseProgress: {},
     currentUserId: null,
     hydrated: false
   };

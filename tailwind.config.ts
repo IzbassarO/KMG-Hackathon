@@ -91,13 +91,34 @@ const config: Config = {
         "fade-in": {
           "0%": { opacity: "0", transform: "translateY(4px)" },
           "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "buddy-float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" }
+        },
+        "buddy-blink": {
+          "0%, 92%, 100%": { transform: "scaleY(1)" },
+          "96%": { transform: "scaleY(0.1)" }
+        },
+        "buddy-wave": {
+          "0%, 100%": { transform: "rotate(0deg)" },
+          "25%": { transform: "rotate(18deg)" },
+          "75%": { transform: "rotate(-8deg)" }
+        },
+        "cloud-pop": {
+          "0%": { opacity: "0", transform: "scale(0.92) translateY(6px)" },
+          "100%": { opacity: "1", transform: "scale(1) translateY(0)" }
         }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         shimmer: "shimmer 2s linear infinite",
-        "fade-in": "fade-in 0.3s ease-out"
+        "fade-in": "fade-in 0.3s ease-out",
+        "buddy-float": "buddy-float 3.5s ease-in-out infinite",
+        "buddy-blink": "buddy-blink 4.5s ease-in-out infinite",
+        "buddy-wave": "buddy-wave 1.6s ease-in-out infinite",
+        "cloud-pop": "cloud-pop 0.25s ease-out"
       },
       boxShadow: {
         card: "0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.06)",
