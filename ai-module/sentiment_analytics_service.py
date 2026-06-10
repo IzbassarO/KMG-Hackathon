@@ -4,6 +4,7 @@
 Динамика по неделям, тренды, рекомендации для HR
 """
 
+import os
 import json
 from datetime import datetime, timedelta
 from typing import List, Dict, Any, Optional, Tuple
@@ -626,7 +627,9 @@ class SentimentAnalyticsService:
 
 if __name__ == "__main__":
     # Инициализация
-    GROQ_API_KEY = ""
+    GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
+    if not GROQ_API_KEY:
+        raise SystemExit("Задайте GROQ_API_KEY в окружении (см. ai-module/.env.example)")
     service = SentimentAnalyticsService(groq_api_key=GROQ_API_KEY)
     
     # Тестовые сообщения
